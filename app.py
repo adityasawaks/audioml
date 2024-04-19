@@ -3,6 +3,7 @@ import librosa
 import numpy as np
 import pickle
 from audio_recorder_streamlit import audio_recorder
+import io  # Add this import statement
 
 # Load the trained model
 with open('trained_model.pkl', 'rb') as file:
@@ -59,5 +60,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
