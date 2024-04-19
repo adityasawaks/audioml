@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit as st
 import librosa
 import numpy as np
 import pickle
@@ -18,7 +19,7 @@ def extract_features(audio, sample_rate=44100):
     elif isinstance(audio, np.ndarray):
         audio_array = audio
     else:
-        raise ValueError("Unsupported audio data format")
+        raise ValueError("Unsupported audio data format. Please provide audio as bytes-like object, file path (str), or NumPy array.")
 
     mfccs_features = librosa.feature.mfcc(y=audio_array, sr=sample_rate, n_mfcc=40)
     mfccs_features_mean = np.mean(mfccs_features.T, axis=0)
@@ -79,6 +80,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
