@@ -2,15 +2,15 @@ import streamlit as st
 import librosa
 import numpy as np
 import pickle
+from audio_recorder_streamlit import audio_recorder
 
 # Load the trained model
 with open('trained_model.pkl', 'rb') as file:
     etc = pickle.load(file)
 
 # Define a function to extract features from an audio file
-def extract_features(audio):
-    sample_rate = 44100  # Sample rate for audio recorder
-    audio_array = np.frombuffer(audio.getvalue(), dtype=np.int16)
+def extract_features(audio, sample_rate=44100):
+    audio_array, _ = librosa.load(audio, sr=sample_rate)
     mfccs_features = librosa.feature.mfcc(y=audio_array, sr=sample_rate, n_mfcc=40)
     mfccs_features_mean = np.mean(mfccs_features.T, axis=0)
     return mfccs_features_mean
@@ -30,7 +30,7 @@ def main():
     st.title("Voice Recognition Web App")
     
     # Option to record audio
-    recording = st.audio_recorder("Record your audio", format="wav")
+    recording = audio_recorder()
     
     # Option to upload an audio file
     uploaded_file = st.file_uploader("Upload an audio file", type=['wav'])
@@ -43,10 +43,14 @@ def main():
             st.write("Prediction:", prediction)
     
     if uploaded_file is not None:
-        # Extract features from the uploaded file and make prediction
-        prediction = classify_audio(uploaded_file)
-        st.write("Prediction:", prediction)
-        
+        # Check if the uploaded file is in WAV format
+        if uploaded_file.type == 'audio/wav':
+            # Extract features from the uploaded file and make prediction
+            prediction = classify_audio(uploaded_file)
+            st.write("Prediction:", prediction)
+        else:
+            st.error("Please upload a WAV file.")
 
 if __name__ == "__main__":
     main()
+
