@@ -15,9 +15,11 @@ def extract_features(audio, sample_rate=44100):
         audio_array, _ = librosa.load(io.BytesIO(audio), sr=sample_rate)
     elif isinstance(audio, str):
         audio_array, _ = librosa.load(audio, sr=sample_rate)
-    else:  # Assume audio is already an array
+    elif isinstance(audio, np.ndarray):
         audio_array = audio
-        
+    else:
+        raise ValueError("Unsupported audio data format")
+
     mfccs_features = librosa.feature.mfcc(y=audio_array, sr=sample_rate, n_mfcc=40)
     mfccs_features_mean = np.mean(mfccs_features.T, axis=0)
     return mfccs_features_mean
