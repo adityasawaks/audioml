@@ -10,7 +10,13 @@ with open('trained_model.pkl', 'rb') as file:
 
 # Define a function to extract features from an audio file
 def extract_features(audio, sample_rate=44100):
-    audio_array, _ = librosa.load(audio, sr=sample_rate)
+    if isinstance(audio, bytes):
+        audio_array, _ = librosa.load(io.BytesIO(audio), sr=sample_rate)
+    elif isinstance(audio, str):
+        audio_array, _ = librosa.load(audio, sr=sample_rate)
+    else:  # Assume audio is already an array
+        audio_array = audio
+        
     mfccs_features = librosa.feature.mfcc(y=audio_array, sr=sample_rate, n_mfcc=40)
     mfccs_features_mean = np.mean(mfccs_features.T, axis=0)
     return mfccs_features_mean
@@ -53,4 +59,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
